@@ -309,6 +309,27 @@ func TestResourceMonitorGrant(t *testing.T) {
 	r.Equal([]string{`SET currentRole=CURRENT_ROLE()`, `GRANT OWNERSHIP ON RESOURCE MONITOR "test_monitor" TO ROLE IDENTIFIER($currentRole) COPY CURRENT GRANTS`}, revoke)
 }
 
+func TestMaskingPolicyGrant(t *testing.T) {
+	r := require.New(t)
+	wg := snowflake.MaskingPolicyGrant("test_masking_policy")
+	r.Equal(wg.Name(), "test_masking_policy")
+
+	s := wg.Show()
+	r.Equal(`SHOW GRANTS ON MASKING POLICY "test_masking_policy"`, s)
+
+	s = wg.Role("bob").Grant("MONITOR", false)
+	r.Equal(`GRANT MONITOR ON MASKING POLICY "test_masking_policy" TO ROLE "bob"`, s)
+
+	revoke := wg.Role("bob").Revoke("MODIFY")
+	r.Equal([]string{`REVOKE MODIFY ON MASKING POLICY "test_masking_policy" FROM ROLE "bob"`}, revoke)
+
+	s = wg.Role("bob").Grant("OWNERSHIP", false)
+	r.Equal(`GRANT OWNERSHIP ON MASKING POLICY "test_masking_policy" TO ROLE "bob" COPY CURRENT GRANTS`, s)
+
+	revoke = wg.Role("bob").Revoke("OWNERSHIP")
+	r.Equal([]string{`SET currentRole=CURRENT_ROLE()`, `GRANT OWNERSHIP ON MASKING POLICY "test_masking_policy" TO ROLE IDENTIFIER($currentRole) COPY CURRENT GRANTS`}, revoke)
+}
+
 func TestShowGrantsOf(t *testing.T) {
 	r := require.New(t)
 	s := snowflake.ViewGrant("test_db", "PUBLIC", "testView").Role("testRole").Show()

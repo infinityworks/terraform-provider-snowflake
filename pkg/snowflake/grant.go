@@ -20,6 +20,7 @@ const (
 	materializedViewType grantType = "MATERIALIZED VIEW"
 	tableType            grantType = "TABLE"
 	warehouseType        grantType = "WAREHOUSE"
+	maskingPolicyType    grantType = "MASKING POLICY"
 	externalTableType    grantType = "EXTERNAL TABLE"
 	fileFormatType       grantType = "FILE FORMAT"
 	functionType         grantType = "FUNCTION"
@@ -186,6 +187,15 @@ func IntegrationGrant(w string) GrantBuilder {
 		name:          w,
 		qualifiedName: fmt.Sprintf(`"%v"`, w),
 		grantType:     integrationType,
+	}
+}
+
+// MaskingPolicyGrant returns a pointer to a CurrentGrantBuilder for a masking policy
+func MaskingPolicyGrant(w string) GrantBuilder {
+	return &CurrentGrantBuilder{
+		name:          w,
+		qualifiedName: fmt.Sprintf(`"%v"`, w),
+		grantType:     maskingPolicyType,
 	}
 }
 

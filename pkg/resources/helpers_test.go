@@ -105,6 +105,14 @@ func maskingPolicy(t *testing.T, id string, params map[string]interface{}) *sche
 	return d
 }
 
+func maskingPolicyGrant(t *testing.T, id string, params map[string]interface{}) *schema.ResourceData {
+	r := require.New(t)
+	d := schema.TestResourceDataRaw(t, resources.MaskingPolicyGrant().Resource.Schema, params)
+	r.NotNil(d)
+	d.SetId(id)
+	return d
+}
+
 func networkPolicy(t *testing.T, id string, params map[string]interface{}) *schema.ResourceData {
 	r := require.New(t)
 	d := schema.TestResourceDataRaw(t, resources.NetworkPolicy().Schema, params)
